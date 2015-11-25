@@ -21,7 +21,7 @@ android {
     dependencies {
         repositories {
             maven {
-                url 'C:/Users/ankit/Desktop/MyoSdk/myorepository'
+                url 'C:/MyoSdk/myorepository'
             }
         }
 
