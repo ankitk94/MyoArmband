@@ -5,13 +5,18 @@
 
 package thalmiclabs.myoarmband;
 
+import thalmiclabs.myoarmband.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +32,7 @@ import com.thalmic.myo.XDirection;
 import com.thalmic.myo.scanner.ScanActivity;
 
 import java.util.ArrayList;
-
-import thalmiclabs.myoarmband.R;
+import java.util.HashMap;
 
 public class MyoArmband extends Activity {
 
@@ -38,7 +42,10 @@ public class MyoArmband extends Activity {
     private ArrayList<Integer> passposePerformed;
     private int maxLength = 20;
     private boolean locked = true;
-
+    private HashMap<String, Integer> passPoseMapping;
+    private boolean takingPassPose;
+    private Button passPoseToggle;
+    private MapAndFetchPoses mapAndFetchPoses;
 
     // Classes that inherit from AbstractDeviceListener can be used to receive events from Myo devices.
     // If you do not override an event, the default behavior is to do nothing.
@@ -87,7 +94,17 @@ public class MyoArmband extends Activity {
         // policy, that means poses will no longer be delivered to the listener.
         @Override
         public void onLock(Myo myo, long timestamp) {
-            matchPasspose(passposePerformed, realPasspose);
+            if(!takingPassPose) {
+                matchPasspose(passposePerformed, realPasspose);
+            }
+            else {
+                mapAndFetchPoses.setRealPassPose(passposePerformed);
+                realPasspose = mapAndFetchPoses.getRealPassPose();
+                takingPassPose = false;
+                mTextView.setText("Passpose changed");
+                Log.i("band", realPasspose.toString());
+                takingPassPose = false;
+            }
             mLockStateView.setText(R.string.locked);
         }
 
@@ -174,8 +191,15 @@ public class MyoArmband extends Activity {
                     passposePerformed.add(3);
                     break;
             }
-
-
+            if(newTextView.getText().equals("Double Tap"));
+            else if(takingPassPose) {
+                newTextView.setTextColor(Color.BLUE);
+            }
+            else
+            {
+                newTextView.setTextColor(Color.BLACK);
+            }
+            newTextView.setMovementMethod(new ScrollingMovementMethod());
             /*if (pose != Pose.UNKNOWN && pose != Pose.REST) {
                 // Tell the Myo to stay unlocked until told otherwise. We do that here so you can
                 // hold the poses without the Myo becoming locked.
@@ -212,6 +236,12 @@ public class MyoArmband extends Activity {
         {
             TextView textView = (TextView)findViewById(R.id.text);
             textView.setText("Unlocked Successfully");
+            textView.setTextColor(Color.GREEN);
+        }
+        else{
+            TextView textView = (TextView)findViewById(R.id.text);
+            textView.setText("Incorrect Passpose");
+            textView.setTextColor(Color.RED);
         }
     }
 
@@ -222,11 +252,31 @@ public class MyoArmband extends Activity {
 
         mLockStateView = (TextView) findViewById(R.id.lock_state);
         mTextView = (TextView) findViewById(R.id.text);
-        realPasspose = new ArrayList<>();
+        passPoseToggle = (Button) findViewById(R.id.set_button);
+        takingPassPose = false;
+        DatabaseHandler db = new DatabaseHandler(this);
+        mapAndFetchPoses = new MapAndFetchPoses(db);
+        realPasspose = mapAndFetchPoses.getRealPassPose();
+        Log.i("band", realPasspose.toString());
+        passPoseToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!takingPassPose) {
+                    takingPassPose = true;
+                    mTextView.setText("Taking passpose");
+                    passposePerformed = new ArrayList<Integer>();
+                } else {
+                    takingPassPose = false;
+                    mTextView.setText("Passpose saved");
+                }
+            }
+        });
+        /*realPasspose = new ArrayList<>();
         realPasspose.add(0); //FIST
         realPasspose.add(1); //WAVE_IN
         realPasspose.add(2); //Wave_OUT
-        realPasspose.add(3); //FINGERS_SPREAD
+        realPasspose.add(3); //FINGERS_SPREAD*/
+
         // First, we initialize the Hub singleton with an application identifier.
         Hub hub = Hub.getInstance();
         if (!hub.init(this)) {
