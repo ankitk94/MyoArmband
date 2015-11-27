@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,7 +101,6 @@ public class MyoArmband extends Activity {
             else {
                 mapAndFetchPoses.setRealPassPose(passposePerformed);
                 realPasspose = mapAndFetchPoses.getRealPassPose();
-                takingPassPose = false;
                 mTextView.setText("Passpose changed");
                 Log.i("band", realPasspose.toString());
                 takingPassPose = false;
@@ -138,7 +138,6 @@ public class MyoArmband extends Activity {
             LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
             TextView newTextView = new TextView(getApplicationContext());
             newTextView.setTextColor(Color.BLACK);
-
             switch (pose) {
                 case UNKNOWN:
                     newTextView.setText(getString(R.string.hello_world));
@@ -154,9 +153,11 @@ public class MyoArmband extends Activity {
                     {
                         myo.unlock(Myo.UnlockType.HOLD);
                         locked = false;
+                        Log.i("band", "Unlocked");
                     }
                     else {
                         myo.lock();
+                        Log.i("band", "Locked");
                         locked = true;
                     }
                     int restTextId = R.string.hello_world;
@@ -171,24 +172,48 @@ public class MyoArmband extends Activity {
                     //newTextView.setText(getString(restTextId));
                     break;
                 case FIST:
-                    newTextView.setText(getString(R.string.pose_fist));
-                    linearLayout.addView(newTextView);
-                    passposePerformed.add(0);
+                    if(passposePerformed.size() == 0 || passposePerformed.get(passposePerformed.size()-1) != 0) {
+                        newTextView.setText(getString(R.string.pose_fist));
+                        linearLayout.addView(newTextView);
+                        passposePerformed.add(0);
+                    }
+                    else
+                    {
+                        newTextView.setText("Repeated");
+                    }
                     break;
                 case WAVE_IN:
-                    newTextView.setText(getString(R.string.pose_wavein));
-                    linearLayout.addView(newTextView);
-                    passposePerformed.add(1);
+                    if(passposePerformed.size() == 0 || passposePerformed.get(passposePerformed.size()-1) != 1) {
+                        newTextView.setText(getString(R.string.pose_wavein));
+                        linearLayout.addView(newTextView);
+                        passposePerformed.add(1);
+                    }
+                    else
+                    {
+                        newTextView.setText("Repeated");
+                    }
                     break;
                 case WAVE_OUT:
-                    newTextView.setText(getString(R.string.pose_waveout));
-                    linearLayout.addView(newTextView);
-                    passposePerformed.add(2);
+                    if(passposePerformed.size() == 0 || passposePerformed.get(passposePerformed.size()-1) != 2) {
+                        newTextView.setText(getString(R.string.pose_waveout));
+                        linearLayout.addView(newTextView);
+                        passposePerformed.add(2);
+                    }
+                    else
+                    {
+                        newTextView.setText("Repeated");
+                    }
                     break;
                 case FINGERS_SPREAD:
-                    newTextView.setText(getString(R.string.pose_fingersspread));
-                    linearLayout.addView(newTextView);
-                    passposePerformed.add(3);
+                    if(passposePerformed.size() == 0 || passposePerformed.get(passposePerformed.size()-1) != 3) {
+                        newTextView.setText(getString(R.string.pose_fingersspread));
+                        linearLayout.addView(newTextView);
+                        passposePerformed.add(3);
+                    }
+                    else
+                    {
+                        newTextView.setText("Repeated");
+                    }
                     break;
             }
             if(newTextView.getText().equals("Double Tap"));
@@ -200,6 +225,9 @@ public class MyoArmband extends Activity {
                 newTextView.setTextColor(Color.BLACK);
             }
             newTextView.setMovementMethod(new ScrollingMovementMethod());
+            ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+            scrollView.scrollTo(0, scrollView.getBottom());
+            Log.i("band", newTextView.getText().toString());
             /*if (pose != Pose.UNKNOWN && pose != Pose.REST) {
                 // Tell the Myo to stay unlocked until told otherwise. We do that here so you can
                 // hold the poses without the Myo becoming locked.

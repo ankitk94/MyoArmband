@@ -4,42 +4,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MyoArmband"
+    android:orientation="vertical"
     tools:ignore="MergeRootFrame">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:id="@+id/outerLayout">
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/set_passpose_string"
+        android:id="@+id/set_button" />
+
+    <TextView
+        android:id="@+id/lock_state"
+        android:text="@string/locked"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        tools:ignore="SpUsage"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:text="@string/hello_world"
+        android:textSize="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="SpUsage"/>
+
+        </LinearLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView">
 
     <LinearLayout
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:orientation="vertical"
         android:id="@+id/linearLayout"
         android:scrollbars="vertical"
         android:gravity="bottom">
 
-        <Button
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/set_passpose_string"
-            android:id="@+id/set_button" />
 
-        <TextView
-            android:id="@+id/lock_state"
-            android:text="@string/locked"
-            android:textSize="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            tools:ignore="SpUsage"/>
-
-        <TextView
-            android:id="@+id/text"
-            android:text="@string/hello_world"
-            android:textSize="25dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="SpUsage"/>
 
 
 
